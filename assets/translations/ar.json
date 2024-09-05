@@ -1,0 +1,19 @@
+{
+  "news app": "تطبيق الأخبار",
+  "settings": "الإعدادات",
+  "business": "الأعمال",
+  "sports": "الرياضة",
+  "science": "العلوم",
+  "general": "عامة",
+  "health": "الصحة",
+  "news tile": "بطاقة الأخبار",
+  "please enter a search term.": "يرجى إدخال مصطلح البحث.",
+  "go back": "عودة",
+  "search...": "بحث...",
+  "searching...": "جاري البحث...",
+  "categories": "الفئات",
+  "entertainment": "الترفيه",
+  "pick your category not interest": "اختر الفئة التي لا تهمك",
+  "error Something Wrong Happen Try Again Later": "حدث خطأ، حاول مرة أخرى لاحقًا",
+  "language": "اللغة"
+}

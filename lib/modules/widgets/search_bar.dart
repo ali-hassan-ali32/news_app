@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../core/providers/home_provider.dart';
 
 class SearchAppBar extends StatelessWidget {
@@ -20,7 +21,14 @@ class SearchAppBar extends StatelessWidget {
             cursorColor: Colors.green,
             decoration: InputDecoration(
               hintText: 'search...'.tr(),
-              suffixIcon: IconButton(onPressed: () => provider.onSearchSubmitted('',context),icon: const Icon(Icons.search,color: Colors.green,)),
+              suffixIcon: IconButton(
+                  onPressed: () => provider.closeSearchBar('', context),
+                  splashColor: Colors.transparent,
+                  hoverColor: Colors.transparent,
+                  icon: const Icon(
+                    Icons.search,
+                    color: Colors.green,
+                  )),
               prefixIcon: IconButton(
                 icon: const Icon(
                   Icons.clear,
@@ -53,12 +61,9 @@ class SearchAppBar extends StatelessWidget {
               filled: true,
               fillColor: Colors.white,
               contentPadding:
-              const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
             ),
             style: const TextStyle(color: Colors.green, fontSize: 20),
-            onFieldSubmitted: (value) {
-              provider.onSearchSubmitted(value,context);
-            },
           ),
         ),
       ),

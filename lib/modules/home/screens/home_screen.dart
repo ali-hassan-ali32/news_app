@@ -3,6 +3,7 @@ import 'package:news_app/core/providers/home_provider.dart';
 import 'package:news_app/core/widgets/custom_background_widget.dart';
 import 'package:news_app/modules/widgets/current_screen.dart';
 import 'package:provider/provider.dart';
+
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_drower.dart';
 
@@ -12,10 +13,8 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final homeProvider = HomeProvider();
-
-    return ChangeNotifierProvider.value(
-      value: homeProvider,
+    return ChangeNotifierProvider(
+      create: (context) => HomeProvider(),
       child: CustomBgWidget(
         child: Scaffold(
           backgroundColor: Colors.transparent,

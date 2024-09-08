@@ -1,18 +1,19 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:news_app/core/models/news_model.dart';
+
 import '../models/category_model.dart';
 
 class HomeProvider extends ChangeNotifier {
   TextEditingController searchController = TextEditingController();
   CategoryModel? currentCategory;
-  Articles? currentArticle;
+  ArticleData? currentArticle;
+  int currentTap = 0;
   String appBarTitle = 'news app';
   int selectedSourceTap = 0;
+
   bool canSearch = false;
   bool isSearching = false;
-  bool goToSettingsTap = false;
-  bool submitSearch = false;
   bool isEnglish = true;
 
   void showTranslationSettings(BuildContext context) {
@@ -30,7 +31,10 @@ class HomeProvider extends ChangeNotifier {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListTile(
-                onTap: () => context.setLocale(const Locale('en')),
+                onTap: () =>
+                    context.setLocale(const Locale('en')).then((value) {
+                  notifyListeners();
+                }),
                 title: Text(
                   'English',
                   style: TextStyle(
@@ -59,7 +63,10 @@ class HomeProvider extends ChangeNotifier {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: ListTile(
-                onTap: () => context.setLocale(const Locale('ar')),
+                onTap: () =>
+                    context.setLocale(const Locale('ar')).then((value) {
+                  notifyListeners();
+                }),
                 title: Text(
                   'العربية',
                   style: TextStyle(
@@ -93,16 +100,18 @@ class HomeProvider extends ChangeNotifier {
   }
 
   void onSettingsPress(BuildContext context) {
-    goToSettingsTap = true;
     canSearch = false;
+    currentTap = 1;
     selectedSourceTap = 0;
     appBarTitle = 'settings';
+
     notifyListeners();
     Navigator.pop(context);
   }
 
   void onSearchTap(BuildContext context) {
     canSearch = false;
+    currentTap = 4;
     isSearching = true;
     notifyListeners();
   }
@@ -114,30 +123,29 @@ class HomeProvider extends ChangeNotifier {
   }
 
   void searching(String value) {
-    searchController.text = value;
-    searchController.text.trim();
+    searchController.text = value.trim();
     notifyListeners();
   }
 
-  void onSearchSubmitted(String value,BuildContext context) {
-    // canSearch = true;
-    // isSearching = false;
-    // submitSearch = true;
-    // // search logic, (filtering articles , fetching results) note for later.
-    // searchController.clear();
-    // notifyListeners();
-    searchController.clear();
-    FocusScope.of(context).unfocus();
+  void closeSearchBar(String value, BuildContext context) {
+    canSearch = true;
+    isSearching = false;
+    currentTap = 2;
+
+    clearSearch(context);
   }
 
   void onCategoryPress(category) {
     currentCategory = category;
+    currentTap = 2;
     appBarTitle = currentCategory!.id;
     canSearch = true;
     notifyListeners();
   }
+
   void onArticlePress(arcticle) {
     currentArticle = arcticle;
+    currentTap = 3;
     appBarTitle = 'news tile';
     canSearch = false;
     notifyListeners();
@@ -152,8 +160,8 @@ class HomeProvider extends ChangeNotifier {
     currentCategory = null;
     currentArticle = null;
     canSearch = false;
-    goToSettingsTap = false;
     selectedSourceTap = 0;
+    currentTap = 0;
     appBarTitle = 'News App';
     notifyListeners();
     Navigator.pop(context);
@@ -162,6 +170,7 @@ class HomeProvider extends ChangeNotifier {
   void goBackToNewsScreen() {
     appBarTitle = currentCategory!.id;
     canSearch = true;
+    currentTap = 2;
     currentArticle = null;
     notifyListeners();
   }

@@ -5,10 +5,11 @@ import 'package:news_app/core/models/source_model.dart';
 import 'package:news_app/core/providers/home_provider.dart';
 import 'package:news_app/core/services/apis/api_manger.dart';
 import 'package:provider/provider.dart';
-import '../../widgets/error_message.dart';
-import '../../widgets/loading_widget.dart';
-import '../../widgets/news_tile.dart';
-import '../../widgets/source_list_view.dart';
+
+import '../../../widgets/error_message.dart';
+import '../../../widgets/loading_widget.dart';
+import '../../../widgets/news_tile.dart';
+import '../../../widgets/source_list_view.dart';
 
 class NewsTab extends StatefulWidget {
   const NewsTab({super.key, required this.categoryId});
@@ -60,7 +61,7 @@ class _NewsTabState extends State<NewsTab> {
                         return const ErrorMessage();
                       }
 
-                      List<Articles> articles = newsSnapshot.data!.articles!;
+                      List<ArticleData> articles = newsSnapshot.data!.articles!;
                       return ListView.builder(
                         physics: const BouncingScrollPhysics(),
                         itemCount: articles.length,

@@ -22,8 +22,6 @@ class CategroyItemWidget extends StatelessWidget {
           provider.onCategoryPress(category);
         },
         child: Container(
-          width: 150,
-          height: 170,
           padding: const EdgeInsets.all(8),
           decoration: BoxDecoration(
               color: category.color,

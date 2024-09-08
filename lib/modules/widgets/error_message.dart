@@ -8,6 +8,10 @@ class ErrorMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(child: Text('error Something Wrong Happen Try Again Later'.tr(),style: const TextStyle(fontSize: 18),));
+    return Center(
+        child: Text(
+      'error Something Wrong Happen Try Again Later'.tr(),
+      style: const TextStyle(fontSize: 16),
+    ));
   }
 }

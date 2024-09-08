@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:news_app/core/providers/home_provider.dart';
 import 'package:provider/provider.dart';
 
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+class SettingsTap extends StatelessWidget {
+  const SettingsTap({super.key});
 
   @override
   Widget build(BuildContext context) {

@@ -1,19 +1,23 @@
 class SourceModel {
   SourceModel({
-      this.status, 
-      this.sources,});
+    this.status,
+    this.message,
+    this.sources,
+  });
 
   SourceModel.fromJson(dynamic json) {
     status = json['status'];
+    message = json['message'];
     if (json['sources'] != null) {
       sources = [];
       json['sources'].forEach((v) {
-        sources?.add(Sources.fromJson(v));
+        sources?.add(SourceData.fromJson(v));
       });
     }
   }
   String? status;
-  List<Sources>? sources;
+  List<SourceData>? sources;
+  String? message;
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -26,17 +30,17 @@ class SourceModel {
 
 }
 
-class Sources {
-  Sources({
-      this.id, 
-      this.name, 
+class SourceData {
+  SourceData({
+    this.id,
+    this.name,
       this.description, 
       this.url, 
       this.category, 
       this.language, 
       this.country,});
 
-  Sources.fromJson(dynamic json) {
+  SourceData.fromJson(dynamic json) {
     id = json['id'];
     name = json['name'];
     description = json['description'];

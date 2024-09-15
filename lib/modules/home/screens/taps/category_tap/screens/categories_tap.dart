@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../widgets/categories_list_view.dart';
+import '../widgets/categories_list_view.dart';
 
 class CategoriesTap extends StatelessWidget {
   const CategoriesTap({

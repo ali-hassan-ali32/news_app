@@ -50,7 +50,9 @@ class HomeCubit extends Cubit<HomeState> {
               padding: const EdgeInsets.all(8.0),
               child: ListTile(
                 onTap: () =>
-                    context.setLocale(const Locale('en')).then((value) {}),
+                    context.setLocale(const Locale('en')).then((value) {
+                  emit(ChangePageState());
+                }),
                 title: Text(
                   'English',
                   style: TextStyle(
@@ -80,7 +82,9 @@ class HomeCubit extends Cubit<HomeState> {
               padding: const EdgeInsets.all(8.0),
               child: ListTile(
                 onTap: () =>
-                    context.setLocale(const Locale('ar')).then((value) {}),
+                    context.setLocale(const Locale('ar')).then((value) {
+                  emit(ChangePageState());
+                }),
                 title: Text(
                   'العربية',
                   style: TextStyle(

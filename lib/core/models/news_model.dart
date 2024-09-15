@@ -1,12 +1,14 @@
-class NewModel {
+class NewsModel {
   String? status;
   int? totalResults;
+  String? message;
   List<ArticleData>? articles;
 
-  NewModel({this.status, this.totalResults, this.articles});
+  NewsModel({this.status, this.totalResults, this.articles, this.message});
 
-  NewModel.fromJson(Map<String, dynamic> json) {
+  NewsModel.fromJson(dynamic json) {
     status = json['status'];
+    message = json['message'];
     totalResults = json['totalResults'];
     if (json['articles'] != null) {
       articles = <ArticleData>[];
@@ -14,6 +16,17 @@ class NewModel {
         articles!.add(ArticleData.fromJson(v));
       });
     }
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['status'] = status;
+    data['message'] = message;
+    data['totalResults'] = totalResults;
+    if (articles != null) {
+      data['articles'] = articles!.map((v) => v.toJson()).toList();
+    }
+    return data;
   }
 }
 
@@ -37,9 +50,8 @@ class ArticleData {
         this.publishedAt,
         this.content});
 
-  ArticleData.fromJson(Map<String, dynamic> json) {
-    source =
-    json['source'] != null ? Source.fromJson(json['source']) : null;
+  ArticleData.fromJson(dynamic json) {
+    source = json['source'] != null ? Source.fromJson(json['source']) : null;
     author = json['author'];
     title = json['title'];
     description = json['description'];
@@ -47,6 +59,21 @@ class ArticleData {
     urlToImage = json['urlToImage'];
     publishedAt = json['publishedAt'];
     content = json['content'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (source != null) {
+      data['source'] = source!.toJson();
+    }
+    data['author'] = author;
+    data['title'] = title;
+    data['description'] = description;
+    data['url'] = url;
+    data['urlToImage'] = urlToImage;
+    data['publishedAt'] = publishedAt;
+    data['content'] = content;
+    return data;
   }
 }
 
@@ -56,8 +83,15 @@ class Source {
 
   Source({this.id, this.name});
 
-  Source.fromJson(Map<String, dynamic> json) {
+  Source.fromJson(dynamic json) {
     id = json['id'];
     name = json['name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['name'] = name;
+    return data;
   }
 }

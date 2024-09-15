@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../core/models/category_model.dart';
+import '../../../../../../core/models/category_model.dart';
 import 'category_item_widget.dart';
 
 class CategoriesListView extends StatelessWidget {
@@ -23,6 +23,6 @@ class CategoriesListView extends StatelessWidget {
             category: CategoryModel.categories[index],
             isRight: (index % 2 == 0),
           ),
-        ));
+    ));
   }
 }

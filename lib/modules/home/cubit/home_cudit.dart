@@ -1,10 +1,26 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
+import 'package:news_app/core/models/category_model.dart';
 import 'package:news_app/core/models/news_model.dart';
+import 'package:news_app/modules/home/cubit/state.dart';
+import 'package:news_app/modules/home/repo/home_repo.dart';
+import 'package:news_app/modules/home/repo/locale_home_repo.dart';
+import 'package:news_app/modules/home/repo/remote_home.dart';
+import 'package:news_app/modules/home/screens/search_screen.dart';
 
-import '../models/category_model.dart';
+import '../../../core/models/source_model.dart';
 
-class HomeProvider extends ChangeNotifier {
+class HomeCubit extends Cubit<HomeState> {
+  HomeCubit() : super(InitalHomeState());
+
+  static HomeCubit get(context) => BlocProvider.of(context);
+
+  SourceModel? sourceModel;
+  NewsModel? newsModel;
+  late HomeRepo homeRepo;
+
   TextEditingController searchController = TextEditingController();
   CategoryModel? currentCategory;
   ArticleData? currentArticle;
@@ -12,8 +28,10 @@ class HomeProvider extends ChangeNotifier {
   String appBarTitle = 'news app';
   int selectedSourceTap = 0;
 
+  List<SourceData> sources = [];
+  List<ArticleData> articles = [];
+
   bool canSearch = false;
-  bool isSearching = false;
   bool isEnglish = true;
 
   void showTranslationSettings(BuildContext context) {
@@ -32,9 +50,7 @@ class HomeProvider extends ChangeNotifier {
               padding: const EdgeInsets.all(8.0),
               child: ListTile(
                 onTap: () =>
-                    context.setLocale(const Locale('en')).then((value) {
-                  notifyListeners();
-                }),
+                    context.setLocale(const Locale('en')).then((value) {}),
                 title: Text(
                   'English',
                   style: TextStyle(
@@ -64,9 +80,7 @@ class HomeProvider extends ChangeNotifier {
               padding: const EdgeInsets.all(8.0),
               child: ListTile(
                 onTap: () =>
-                    context.setLocale(const Locale('ar')).then((value) {
-                  notifyListeners();
-                }),
+                    context.setLocale(const Locale('ar')).then((value) {}),
                 title: Text(
                   'العربية',
                   style: TextStyle(
@@ -92,7 +106,9 @@ class HomeProvider extends ChangeNotifier {
                 ),
               ),
             ),
-            const SizedBox(height: 20,)
+            const SizedBox(
+              height: 20,
+            )
           ],
         );
       },
@@ -104,35 +120,17 @@ class HomeProvider extends ChangeNotifier {
     currentTap = 1;
     selectedSourceTap = 0;
     appBarTitle = 'settings';
-
-    notifyListeners();
+    emit(ChangeCategoryState());
     Navigator.pop(context);
   }
 
   void onSearchTap(BuildContext context) {
-    canSearch = false;
-    currentTap = 4;
-    isSearching = true;
-    notifyListeners();
-  }
-
-  void clearSearch(BuildContext context) {
-    searchController.clear();
-    FocusScope.of(context).unfocus();
-    notifyListeners();
-  }
-
-  void searching(String value) {
-    searchController.text = value.trim();
-    notifyListeners();
-  }
-
-  void closeSearchBar(String value, BuildContext context) {
-    canSearch = true;
-    isSearching = false;
-    currentTap = 2;
-
-    clearSearch(context);
+    showSearch(
+        context: context,
+        delegate: CustomSearchDelegate(
+          HomeCubit.get(context),
+        ));
+    emit(ChangePageState());
   }
 
   void onCategoryPress(category) {
@@ -140,7 +138,7 @@ class HomeProvider extends ChangeNotifier {
     currentTap = 2;
     appBarTitle = currentCategory!.id;
     canSearch = true;
-    notifyListeners();
+    emit(ChangeCategoryState());
   }
 
   void onArticlePress(arcticle) {
@@ -148,22 +146,25 @@ class HomeProvider extends ChangeNotifier {
     currentTap = 3;
     appBarTitle = 'news tile';
     canSearch = false;
-    notifyListeners();
+    emit(ChangePageState());
   }
 
-  void setSource(int value) {
+  void onTapPress(int value) {
     selectedSourceTap = value;
-    notifyListeners();
+    getNews();
+    emit(ChangeTapState());
   }
 
   void goBackToCategoryScreen(BuildContext context) {
     currentCategory = null;
     currentArticle = null;
     canSearch = false;
+    sources = [];
+    articles = [];
     selectedSourceTap = 0;
     currentTap = 0;
     appBarTitle = 'News App';
-    notifyListeners();
+    emit(ChangeCategoryState());
     Navigator.pop(context);
   }
 
@@ -172,6 +173,43 @@ class HomeProvider extends ChangeNotifier {
     canSearch = true;
     currentTap = 2;
     currentArticle = null;
-    notifyListeners();
+    emit(ChangePageState());
+  }
+
+  Future<void> getSources() async {
+    emit(GetSourceLoadingState());
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+    if (isConnected) {
+      homeRepo = RemoteHomeRepo();
+    } else {
+      homeRepo = LocaleHomeRepo();
+    }
+    try {
+      sourceModel = await homeRepo.getSources(id: currentCategory!.id);
+      sources = sourceModel?.sources ?? [];
+      emit(GetSourceSuccessState());
+      getNews();
+    } catch (e) {
+      emit(GetSourceErrorState(e.toString()));
+    }
+  }
+
+  Future<void> getNews() async {
+    emit(GetNewsLoadingState());
+    bool isConnected = await InternetConnectionChecker().hasConnection;
+    if (isConnected) {
+      homeRepo = RemoteHomeRepo();
+    } else {
+      homeRepo = LocaleHomeRepo();
+    }
+
+    try {
+      newsModel =
+          await homeRepo.getNews(sourceId: sources[selectedSourceTap].id!);
+      articles = newsModel?.articles ?? [];
+      emit(GetNewsSuccessState());
+    } catch (e) {
+      emit(GetNewsErrorState(e.toString()));
+    }
   }
 }

@@ -14,53 +14,50 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => HomeCubit(),
-      child: BlocConsumer<HomeCubit, HomeState>(
-        listener: (context, state) {
-          if (state is GetSourceLoadingState || state is GetNewsLoadingState) {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return const AlertDialog(
-                  elevation: 0,
-                  backgroundColor: Colors.transparent,
-                  title: Center(
-                    child: CircularProgressIndicator(
-                      color: Colors.green,
-                    ),
+    return BlocConsumer<HomeCubit, HomeState>(
+      listener: (context, state) {
+        if (state is GetSourceLoadingState || state is GetNewsLoadingState) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return const AlertDialog(
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                title: Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.green,
                   ),
-                );
-              },
-            );
-          }
-          if (state is GetSourceErrorState) {
-            Navigator.pop(context);
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text(state.error),
-                );
-              },
-            );
-          }
-          if (state is GetSourceSuccessState || state is GetNewsSuccessState) {
-            Navigator.pop(context);
-          }
-        },
-        builder: (context, state) {
-          var cubit = HomeCubit.get(context);
-          return CustomBgWidget(
-            child: Scaffold(
-              backgroundColor: Colors.transparent,
-              appBar: const CustomAppBar(),
-              drawer: const CustomDrower(),
-              body: CurrentScreen(cubit: cubit),
-            ),
+                ),
+              );
+            },
           );
-        },
-      ),
+        }
+        if (state is GetSourceErrorState) {
+          Navigator.pop(context);
+          showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                title: Text(state.error),
+              );
+            },
+          );
+        }
+        if (state is GetSourceSuccessState || state is GetNewsSuccessState) {
+          Navigator.pop(context);
+        }
+      },
+      builder: (context, state) {
+        var cubit = HomeCubit.get(context);
+        return CustomBgWidget(
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            appBar: const CustomAppBar(),
+            drawer: const CustomDrower(),
+            body: CurrentScreen(cubit: cubit),
+          ),
+        );
+      },
     );
   }
 }

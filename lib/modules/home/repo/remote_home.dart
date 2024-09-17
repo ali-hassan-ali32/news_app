@@ -5,8 +5,9 @@ import 'package:news_app/modules/home/repo/home_repo.dart';
 
 class RemoteHomeRepo implements HomeRepo {
   @override
-  Future<NewsModel> getNews({required String sourceId}) async {
-    return await NewsApi.getNews(sourceId: sourceId);
+  Future<NewsModel> getNews(
+      {required String sourceId, String searchQuery = ''}) async {
+    return await NewsApi.getNews(sourceId: sourceId, searchQuery: searchQuery);
   }
 
   @override

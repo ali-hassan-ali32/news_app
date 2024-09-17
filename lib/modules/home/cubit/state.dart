@@ -1,3 +1,5 @@
+
+
 abstract class HomeState {}
 
 class InitalHomeState extends HomeState {}
@@ -28,8 +30,14 @@ class GetNewsErrorState extends HomeState {
 
 class ChangePageState extends HomeState {}
 
-class DidNotEnterSearchQeuryYet extends HomeState {}
+/////////////////// Search State ///////////////////
+
+class DidNotSearchYetState extends HomeState {}
+
+class SearchErrorState extends HomeState {}
 
 class SearchingState extends HomeState {}
 
-class SearchIsNotExist extends HomeState {}
+class SearchIsNotExistState extends HomeState {}
+
+class SearchFoundState extends HomeState {}

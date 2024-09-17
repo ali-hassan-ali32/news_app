@@ -63,6 +63,7 @@ class CustomSearchBar extends StatelessWidget implements PreferredSizeWidget {
               onPressed: () {
                 if (homeCubit.searchQuery.isNotEmpty) {
                   homeCubit.getSearchNews(searchQuery: homeCubit.searchQuery);
+                  FocusScope.of(context).unfocus();
                 }
               },
               icon: const Icon(Icons.search, color: Colors.green, size: 32),

@@ -4,11 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:news_app/core/models/category_model.dart';
 import 'package:news_app/core/models/news_model.dart';
+import 'package:news_app/core/services/apis/api_manger.dart';
 import 'package:news_app/modules/home/cubit/state.dart';
 import 'package:news_app/modules/home/repo/home_repo.dart';
 import 'package:news_app/modules/home/repo/locale_home_repo.dart';
 import 'package:news_app/modules/home/repo/remote_home.dart';
-import 'package:news_app/modules/home/screens/search_screen.dart';
+import 'package:news_app/modules/home/screens/search_screen/screens/search_screen.dart';
 
 import '../../../core/models/source_model.dart';
 
@@ -27,13 +28,16 @@ class HomeCubit extends Cubit<HomeState> {
   int currentTap = 0;
   String appBarTitle = 'news app';
   int selectedSourceTap = 0;
+  String searchQuery = '';
 
   List<SourceData> sources = [];
   List<ArticleData> articles = [];
+  List<ArticleData> searchedArticles = [];
 
   bool canSearch = false;
   bool isEnglish = true;
 
+  // i put this (UI) here to fix the settings title translation refresh => value.then(emit())
   void showTranslationSettings(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -128,13 +132,34 @@ class HomeCubit extends Cubit<HomeState> {
     Navigator.pop(context);
   }
 
+  void clearSearch() {
+    searchController.clear();
+    searchQuery = '';
+  }
+
   void onSearchTap(BuildContext context) {
-    showSearch(
-        context: context,
-        delegate: CustomSearchDelegate(
-          HomeCubit.get(context),
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const SearchScreen(),
         ));
-    emit(ChangePageState());
+    emit(DidNotSearchYetState());
+  }
+
+  Future<void> getSearchNews({required String searchQuery}) async {
+    emit(SearchingState());
+    try {
+      NewsModel news = await NewsApi.getSearchedNews(
+          searchQuery: searchQuery, category: currentCategory!.id);
+      searchedArticles = news.articles ?? [];
+      if (searchedArticles.isEmpty) {
+        emit(SearchIsNotExistState());
+      } else {
+        emit(SearchFoundState());
+      }
+    } catch (e) {
+      emit(SearchErrorState());
+    }
   }
 
   void onCategoryPress(category) {
@@ -147,10 +172,6 @@ class HomeCubit extends Cubit<HomeState> {
 
   void onArticlePress(arcticle) {
     currentArticle = arcticle;
-    currentTap = 3;
-    appBarTitle = 'news tile';
-    canSearch = false;
-    emit(ChangePageState());
   }
 
   void onTapPress(int value) {
@@ -170,14 +191,6 @@ class HomeCubit extends Cubit<HomeState> {
     appBarTitle = 'News App';
     emit(ChangeCategoryState());
     Navigator.pop(context);
-  }
-
-  void goBackToNewsScreen() {
-    appBarTitle = currentCategory!.id;
-    canSearch = true;
-    currentTap = 2;
-    currentArticle = null;
-    emit(ChangePageState());
   }
 
   Future<void> getSources() async {
@@ -201,6 +214,7 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> getNews() async {
     emit(GetNewsLoadingState());
     bool isConnected = await InternetConnectionChecker().hasConnection;
+
     if (isConnected) {
       homeRepo = RemoteHomeRepo();
     } else {
@@ -210,6 +224,7 @@ class HomeCubit extends Cubit<HomeState> {
     try {
       newsModel =
           await homeRepo.getNews(sourceId: sources[selectedSourceTap].id!);
+
       articles = newsModel?.articles ?? [];
       emit(GetNewsSuccessState());
     } catch (e) {

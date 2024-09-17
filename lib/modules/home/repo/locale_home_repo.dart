@@ -5,7 +5,8 @@ import 'package:news_app/modules/home/repo/home_repo.dart';
 
 class LocaleHomeRepo implements HomeRepo {
   @override
-  Future<NewsModel> getNews({required String sourceId}) {
+  Future<NewsModel> getNews(
+      {required String sourceId, String searchQuery = ''}) {
     return CachedNews.getNews();
   }
 

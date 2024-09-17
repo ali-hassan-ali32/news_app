@@ -47,6 +47,7 @@ dependencies:
   internet_connection_checker: any
   hive: ^2.2.3
   path_provider: any
+  url_launcher: any
 
 dev_dependencies:
   flutter_test:
